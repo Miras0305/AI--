@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>{{topic.title}}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>{{topic.title}}</h1>
+  </div>
+  <div id="posts">
+    {% for p in posts %}
+      <div class="post {% if 'AI' in p.author %}ai{% endif %}">
+        <b>{{p.author}}</b>
+        <p>{{p.text}}</p>
+      </div>
+    {% endfor %}
+  </div>
+  <textarea id="msg" placeholder="Напишите вопрос или сообщение..."></textarea>
+  <div class="buttons">
+    <button type="button" id="sendBtn">Отправить</button>
+    <button type="button" id="aiBtn" class="ai">🤖 Спросить ИИ</button>
+  </div>
+  <div class="footer">
+    AI отвечает автоматически и может ошибаться
+  </div>
+</div>
+<script>
+  const topicId = {{ topic.id }};
+</script>
+<script src="/static/forum.js"></script>
+<button onclick="location.href='/';file:index.html"> Назад</button>
+</body>
+</html>

@@ -1,89 +1,55 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GadgetHub | Магазин и Форум</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Форум гаджетов</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-
-<header>
-    <h1>Gadget<span>Hub</span></h1>
-    <nav class="nav-links">
-        <a href="#shop">Магазин</a>
-        <a href="#faq">FAQ-Форум</a>
-        <a href="#cart">Корзина</a>
-    </nav>
-</header>
-
-<section class="hero">
-    <h2>Будущее уже здесь</h2>
-    <p>Лучшие гаджеты по доступным ценам с гарантией качества.</p>
-    <button style="background: var(--accent);">Перейти к покупкам</button>
-</section>
-
-<section id="shop" class="products">
-    <div class="card">
-        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Watch" width="100%">
-        <h3>Smart Watch X</h3>
-        <p>75000 ТГ</p>
-        <button>В корзину</button>
-    </div>
-    <div class="card">
-        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Headphones" width="100%">
-        <h3>Pro Audio 360</h3>
-        <p>60000 ТГ</p>
-        <button>В корзину</button>
-    </div>
-</section>
-
-<section id="faq" class="faq-section">
-    <h2>FAQ & Форум вопросов</h2>
-    
-    <div class="faq-list" id="faqList">
-        <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-question">Как оформить возврат товара? <span>+</span></div>
-            <div class="faq-answer">Вы можете вернуть товар в течение 14 дней через личный кабинет или в офлайн магазине.</div>
-        </div>
-        <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-question">Есть ли международная доставка? <span>+</span></div>
-            <div class="faq-answer">Да, мы доставляем гаджеты более чем в 50 стран мира через партнерские логистические службы.</div>
-        </div>
-    </div>
-
-   
-
-
-<button onclick="location.href='http://127.0.0.1:5000/'">Перейти к AI-консультанту</button>
-<div id="answer"></div>
-
-
 <script>
-async function askAI() {
-  const question = document.getElementById("question").value;
+async function createTopic() {
+    const titleInput = document.getElementById("title");
+    const title = titleInput.value.trim();
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer YOUR_OPENAI_API_KEY"
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "Ты консультант магазина гаджетов." },
-        { role: "user", content: question }
-      ]
-    })
-  });
+    if (!title) {
+        alert("Введите название темы");
+        return;
+    }
 
-  const data = await response.json();
-  document.getElementById("answer").innerText =
-    data.choices[0].message.content;
+    const response = await fetch("/create-topic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: title })
+    });
+
+    const data = await response.json();
+    if (data.id !== undefined) {
+        window.location.href = `/topic/${data.id}`;
+    } else {
+        alert("Ошибка при создании темы");
+    }
 }
 </script>
 
-
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🔧 GadgetTech Forum</h1>
+    <p>Обсуждение гаджетов, техники и технологий</p>
+  </div>
+  <input id="title" placeholder="Название новой темы">
+  <button type="button" onclick="createTopic()">Создать тему</button>
+  <div class="topic-list">
+    {% for t in topics %}
+      <div class="topic">
+        <a href="/topic/{{t.id}}">{{t.title}}</a>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="footer">
+    © GadgetTech Forum • AI Assistant
+  </div>
+</div>
+<script src="/static/forum.js"></script>
+<button onclick="location.href='http://127.0.0.1:5500'"> Назад на сайт магазина</button>
 </body>
 </html>
